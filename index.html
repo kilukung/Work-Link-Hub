@@ -392,7 +392,7 @@
     </style>
 </head>
 <body class="min-h-screen gradient-bg relative overflow-x-hidden">
-     <!-- Animated background elements -->
+    <!-- Animated background elements -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full pulse-ring"></div>
         <div class="absolute top-1/2 -left-20 w-60 h-60 bg-white opacity-5 rounded-full pulse-ring" style="animation-delay: 1s;"></div>
@@ -552,6 +552,12 @@
                     <div class="space-y-4 md:space-y-6">
                         <input type="text" id="linkName" placeholder="Link Name" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
                         <input type="url" id="linkUrl" placeholder="URL (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <div class="flex items-center space-x-3">
+                            <input type="text" id="linkIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="flex-1 border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <div class="bg-gray-100 p-3 rounded-xl flex items-center justify-center w-12 h-12">
+                                <i id="linkIconPreview" class="fas fa-external-link-alt text-gray-400"></i>
+                            </div>
+                        </div>
                         <textarea id="linkDescription" placeholder="Description (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm h-20 md:h-24 resize-none text-sm md:text-base"></textarea>
                         <div class="flex items-center space-x-3">
                             <input type="checkbox" id="linkVpnRequired" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2">
@@ -586,6 +592,12 @@
                     <div class="space-y-4 md:space-y-6">
                         <input type="text" id="editLinkName" placeholder="Link Name" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
                         <input type="url" id="editLinkUrl" placeholder="URL (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <div class="flex items-center space-x-3">
+                            <input type="text" id="editLinkIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="flex-1 border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <div class="bg-gray-100 p-3 rounded-xl flex items-center justify-center w-12 h-12">
+                                <i id="editLinkIconPreview" class="fas fa-external-link-alt text-gray-400"></i>
+                            </div>
+                        </div>
                         <textarea id="editLinkDescription" placeholder="Description (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm h-20 md:h-24 resize-none text-sm md:text-base"></textarea>
                         <div class="flex items-center space-x-3">
                             <input type="checkbox" id="editLinkVpnRequired" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2">
@@ -838,15 +850,15 @@
                         </div>
                         <div>
                             <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">${section.name}</h3>
-                            <p class="text-gray-500 text-xs md:text-sm mt-1">${section.links.length} resources available</p>
+                            <p class="text-gray-500 text-xs md:text-sm mt-1">${section.links.filter(link => !link.hidden).length} resources available</p>
                         </div>
                     </div>
                     <div class="mobile-links grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                        ${section.links.map((link, linkIndex) => `
+                        ${section.links.filter(link => !link.hidden).map((link, linkIndex) => `
                             <div class="mobile-link-card link-card bg-white/80 backdrop-blur-sm p-3 md:p-4 rounded-xl md:rounded-2xl cursor-pointer group ${link.vpnRequired ? 'vpn-required' : ''} touch-target" onclick="handleLinkClick('${link.url}', '${link.name}', ${link.vpnRequired || false}, ${index}, ${linkIndex})" style="animation-delay: ${(index * 0.1) + (linkIndex * 0.05)}s">
                                 <div class="flex items-start space-x-2 md:space-x-3">
                                     <div class="bg-gradient-to-r from-blue-400 to-purple-500 text-white p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-md group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
-                                        <i class="fas ${link.vpnRequired ? 'fa-shield-alt' : 'fa-external-link-alt'} text-xs md:text-sm"></i>
+                                        <i class="${link.icon || (link.vpnRequired ? 'fas fa-shield-alt' : 'fas fa-external-link-alt')} text-xs md:text-sm"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <h4 class="font-semibold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-blue-600 transition-colors duration-200">${link.name}</h4>
@@ -868,13 +880,19 @@
         }
 
         // Handle link clicks
-        function handleLinkClick(url, name, vpnRequired = false, sectionIndex, linkIndex) {
+        function handleLinkClick(url, name, vpnRequired = false, sectionIndex, originalLinkIndex) {
+            // Find the actual link index in the original array (not filtered)
+            const section = workspaceData.sections[sectionIndex];
+            const visibleLinks = section.links.filter(link => !link.hidden);
+            const actualLink = visibleLinks[originalLinkIndex];
+            const actualLinkIndex = section.links.findIndex(link => link === actualLink);
+            
             // Track the click
-            if (workspaceData.sections[sectionIndex] && workspaceData.sections[sectionIndex].links[linkIndex]) {
-                if (!workspaceData.sections[sectionIndex].links[linkIndex].clicks) {
-                    workspaceData.sections[sectionIndex].links[linkIndex].clicks = 0;
+            if (section && section.links[actualLinkIndex]) {
+                if (!section.links[actualLinkIndex].clicks) {
+                    section.links[actualLinkIndex].clicks = 0;
                 }
-                workspaceData.sections[sectionIndex].links[linkIndex].clicks++;
+                section.links[actualLinkIndex].clicks++;
                 
                 // Save the updated data
                 saveData();
@@ -883,7 +901,7 @@
                 renderSections();
                 
                 // Show click notification
-                showNotification(`📊 ${name} - Total clicks: ${workspaceData.sections[sectionIndex].links[linkIndex].clicks}`, 'info');
+                showNotification(`📊 ${name} - Total clicks: ${section.links[actualLinkIndex].clicks}`, 'info');
             }
             
             if (vpnRequired) {
@@ -940,14 +958,17 @@
                     
                     <div class="space-y-2 md:space-y-3 links-container" data-section-index="${sectionIndex}">
                         ${section.links.map((link, linkIndex) => `
-                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-gray-50 to-white p-3 md:p-4 rounded-xl md:rounded-2xl draggable link-item border border-gray-100 shadow-sm gap-3 md:gap-0" draggable="true" data-link-index="${linkIndex}">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center ${link.hidden ? 'bg-gradient-to-r from-gray-100 to-gray-200 opacity-60' : 'bg-gradient-to-r from-gray-50 to-white'} p-3 md:p-4 rounded-xl md:rounded-2xl draggable link-item border border-gray-100 shadow-sm gap-3 md:gap-0" draggable="true" data-link-index="${linkIndex}">
                                 <div class="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0 w-full md:w-auto">
                                     <i class="fas fa-grip-vertical drag-handle text-gray-400 hover:text-gray-600 flex-shrink-0"></i>
                                     <div class="bg-gradient-to-r from-blue-400 to-purple-500 text-white p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-md flex-shrink-0">
-                                        <i class="fas fa-link text-xs md:text-sm"></i>
+                                        <i class="${link.icon || 'fas fa-link'} text-xs md:text-sm"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <div class="font-semibold text-gray-800 text-sm md:text-base">${link.name}</div>
+                                        <div class="font-semibold text-gray-800 text-sm md:text-base flex items-center">
+                                            ${link.name}
+                                            ${link.hidden ? '<span class="ml-2 text-xs bg-gray-400 text-white px-2 py-1 rounded-full">Hidden</span>' : ''}
+                                        </div>
                                         ${link.url && link.url !== '#' ? `<div class="text-xs md:text-sm text-blue-600 truncate">${link.url}</div>` : ''}
                                         ${link.description ? `<div class="text-xs md:text-sm text-gray-500 mt-1">${link.description}</div>` : ''}
                                         <div class="flex items-center mt-2 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
@@ -957,6 +978,9 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-2 md:space-x-3 w-full md:w-auto justify-end">
+                                    <button onclick="toggleLinkVisibility(${sectionIndex}, ${linkIndex})" class="${link.hidden ? 'text-gray-400 hover:text-gray-600' : 'text-green-500 hover:text-green-700'} p-2 rounded-lg md:rounded-xl hover:bg-gray-50 transition-all duration-200 touch-target" title="${link.hidden ? 'Show link' : 'Hide link'}">
+                                        <i class="fas ${link.hidden ? 'fa-eye-slash' : 'fa-eye'} text-sm"></i>
+                                    </button>
                                     <button onclick="editLink(${sectionIndex}, ${linkIndex})" class="text-blue-500 hover:text-blue-700 p-2 rounded-lg md:rounded-xl hover:bg-blue-50 transition-all duration-200 touch-target">
                                         <i class="fas fa-edit text-sm"></i>
                                     </button>
@@ -1057,8 +1081,11 @@
             // Clear form
             document.getElementById('linkName').value = '';
             document.getElementById('linkUrl').value = '';
+            document.getElementById('linkIcon').value = '';
             document.getElementById('linkDescription').value = '';
             document.getElementById('linkVpnRequired').checked = false;
+            // Reset icon preview
+            document.getElementById('linkIconPreview').className = 'fas fa-external-link-alt text-gray-400';
         }
 
         function showEditSectionModal(sectionIndex) {
@@ -1081,8 +1108,18 @@
             
             document.getElementById('editLinkName').value = link.name;
             document.getElementById('editLinkUrl').value = link.url === '#' ? '' : link.url;
+            document.getElementById('editLinkIcon').value = link.icon || '';
             document.getElementById('editLinkDescription').value = link.description || '';
             document.getElementById('editLinkVpnRequired').checked = link.vpnRequired || false;
+            
+            // Update icon preview
+            const iconPreview = document.getElementById('editLinkIconPreview');
+            if (link.icon) {
+                iconPreview.className = link.icon + ' text-gray-400';
+            } else {
+                iconPreview.className = 'fas fa-external-link-alt text-gray-400';
+            }
+            
             document.getElementById('editLinkModal').classList.remove('hidden');
         }
 
@@ -1143,6 +1180,7 @@
         function saveLink() {
             const name = document.getElementById('linkName').value.trim();
             const url = document.getElementById('linkUrl').value.trim();
+            const icon = document.getElementById('linkIcon').value.trim();
             const description = document.getElementById('linkDescription').value.trim();
             const vpnRequired = document.getElementById('linkVpnRequired').checked;
             
@@ -1157,6 +1195,10 @@
                 description: description,
                 clicks: 0
             };
+            
+            if (icon) {
+                newLink.icon = icon;
+            }
             
             if (vpnRequired) {
                 newLink.vpnRequired = true;
@@ -1191,6 +1233,7 @@
         function saveEditLink() {
             const name = document.getElementById('editLinkName').value.trim();
             const url = document.getElementById('editLinkUrl').value.trim();
+            const icon = document.getElementById('editLinkIcon').value.trim();
             const description = document.getElementById('editLinkDescription').value.trim();
             const vpnRequired = document.getElementById('editLinkVpnRequired').checked;
             
@@ -1207,6 +1250,10 @@
                 description: description,
                 clicks: existingLink.clicks || 0  // Preserve existing click count
             };
+            
+            if (icon) {
+                updatedLink.icon = icon;
+            }
             
             if (vpnRequired) {
                 updatedLink.vpnRequired = true;
@@ -1228,6 +1275,18 @@
                 renderSettingsEditor();
                 showNotification('Link deleted successfully', 'success');
             }
+        }
+
+        function toggleLinkVisibility(sectionIndex, linkIndex) {
+            const link = workspaceData.sections[sectionIndex].links[linkIndex];
+            link.hidden = !link.hidden;
+            
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            
+            const status = link.hidden ? 'hidden' : 'visible';
+            showNotification(`Link is now ${status}`, 'success');
         }
 
         // Dark mode functionality
@@ -1257,6 +1316,21 @@
         // Initialize dark mode
         updateDarkMode();
 
+        // Icon preview functionality
+        function updateIconPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            
+            input.addEventListener('input', function() {
+                const iconClass = this.value.trim();
+                if (iconClass && iconClass.includes('fa-')) {
+                    preview.className = iconClass + ' text-gray-400';
+                } else {
+                    preview.className = 'fas fa-external-link-alt text-gray-400';
+                }
+            });
+        }
+
         // Event listeners
         document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
         document.getElementById('settingsBtn').addEventListener('click', showSettings);
@@ -1268,6 +1342,10 @@
         document.getElementById('saveEditSection').addEventListener('click', saveEditSection);
         document.getElementById('cancelEditLink').addEventListener('click', hideEditLinkModal);
         document.getElementById('saveEditLink').addEventListener('click', saveEditLink);
+        
+        // Setup icon preview listeners
+        updateIconPreview('linkIcon', 'linkIconPreview');
+        updateIconPreview('editLinkIcon', 'editLinkIconPreview');
 
         // Close modals when clicking outside
         document.getElementById('settingsModal').addEventListener('click', function(e) {
@@ -1458,5 +1536,5 @@
             }
         }, 5000);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'969eb007b7aa3e68',t:'MTc1NDMxNzE0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'969edd4ab7c9ce0f',t:'MTc1NDMxODk5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Link Hub</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a5568">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" href="icon-192x192.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmsawQyplWMxS_BGEKsl5aJyaxFQj_nEc",
+            authDomain: "work-link-hub.firebaseapp.com",
+            projectId: "work-link-hub",
+            storageBucket: "work-link-hub.firebasestorage.app",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:baeb4adfca9324668c1435",
+            measurementId: "G-2ELGNCXLTT"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Make Firebase available globally
+        window.firebaseDB = db;
+        window.firebaseDoc = doc;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseOnSnapshot = onSnapshot;
+        
+        // Initialize the app after Firebase is loaded
+        window.initializeApp();
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            /* Header mobile adjustments */
+            .mobile-header {
+                padding: 0.75rem !important;
+            }
+            
+            .mobile-header h1 {
+                font-size: 1.25rem !important;
+            }
+            
+            .mobile-header .main-logo {
+                display: none !important;
+            }
+            
+            .mobile-header .header-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+            
+            .mobile-header .header-buttons button {
+                padding: 0.5rem !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+            }
+            
+            .mobile-header .header-buttons button span {
+                display: none !important;
+            }
+            
+            .mobile-header .header-buttons button i {
+                font-size: 0.875rem !important;
+            }
+            
+            .mobile-header #syncStatus {
+                display: none !important;
+            }
+            
+            /* Card adjustments */
+            .mobile-card {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .mobile-card h2 {
+                font-size: 1.25rem !important;
+            }
+            
+            .mobile-card h3 {
+                font-size: 1.125rem !important;
+            }
+            
+            /* Link grid mobile */
+            .mobile-links {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            
+            .mobile-link-card {
+                padding: 1rem !important;
+            }
+            
+            .mobile-link-card h4 {
+                font-size: 0.875rem !important;
+                line-height: 1.25 !important;
+            }
+            
+            .mobile-link-card p {
+                font-size: 0.75rem !important;
+                line-height: 1.25 !important;
+            }
+            
+            /* Modal mobile adjustments */
+            .mobile-modal {
+                margin: 0.5rem !important;
+                max-height: calc(100vh - 1rem) !important;
+                width: calc(100vw - 1rem) !important;
+                max-width: none !important;
+            }
+            
+            .mobile-modal-content {
+                padding: 1rem !important;
+            }
+            
+            .mobile-modal h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Settings editor mobile */
+            .mobile-settings-section {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .mobile-settings-buttons {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            
+            .mobile-settings-buttons button {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            
+            /* Form mobile adjustments */
+            .mobile-form-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .mobile-form-buttons {
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+            }
+            
+            .mobile-form-buttons button {
+                width: 100% !important;
+                padding: 0.875rem !important;
+            }
+            
+            /* Touch targets */
+            .touch-target {
+                min-height: 44px !important;
+                min-width: 44px !important;
+            }
+            
+            /* Reduce animations on mobile */
+            .mobile-reduced-motion * {
+                animation-duration: 0.2s !important;
+                transition-duration: 0.2s !important;
+            }
+        }
+        .hover-scale {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-scale:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .draggable {
+            cursor: move;
+            transition: all 0.3s ease;
+        }
+        .draggable:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        .dragging {
+            opacity: 0.6;
+            transform: rotate(3deg) scale(1.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .drag-over {
+            border: 2px dashed #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        .drag-handle {
+            cursor: grab;
+            color: #9ca3af;
+            transition: all 0.2s ease;
+        }
+        .drag-handle:hover {
+            color: #6b7280;
+            transform: scale(1.1);
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: rgba(99, 102, 241, 0.2);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        .link-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .link-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: rgba(99, 102, 241, 0.3);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+        .btn-modern {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+        .section-icon {
+            transition: all 0.3s ease;
+        }
+        .section-icon:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            80%, 100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        /* VPN required link styling */
+        .vpn-required {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+            border: 2px solid #f59e0b !important;
+            position: relative;
+        }
+        .vpn-required::before {
+            content: 'VPN';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .vpn-required .bg-gradient-to-r {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        }
+        .dark .vpn-required {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%) !important;
+            border-color: #f59e0b !important;
+        }
+        
+        /* Dark mode styles */
+        .dark {
+            color-scheme: dark;
+        }
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e293b 100%);
+        }
+        .dark .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .dark .card-hover:hover {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .dark .link-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(148, 163, 184, 0.1);
+        }
+        .dark .link-card:hover {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        .dark .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .dark .draggable:hover {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+        }
+        .dark .drag-over {
+            border: 2px dashed #3b82f6;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+        }
+        .dark input, .dark textarea {
+            background: rgba(30, 41, 59, 0.8) !important;
+            border-color: rgba(148, 163, 184, 0.2) !important;
+            color: #e2e8f0 !important;
+        }
+        .dark input::placeholder, .dark textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        .dark input:focus, .dark textarea:focus {
+            background: rgba(30, 41, 59, 0.9) !important;
+            border-color: #3b82f6 !important;
+        }
+        .dark h1, .dark h2, .dark h3, .dark h4 {
+            color: #e2e8f0;
+        }
+        .dark p, .dark span {
+            color: #cbd5e1;
+        }
+        .dark .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        .dark .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+        .dark .text-gray-800 {
+            color: #e2e8f0 !important;
+        }
+        
+        /* Dark mode transition */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg relative overflow-x-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full pulse-ring"></div>
+        <div class="absolute top-1/2 -left-20 w-60 h-60 bg-white opacity-5 rounded-full pulse-ring" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-white opacity-10 rounded-full pulse-ring" style="animation-delay: 2s;"></div>
+    </div>
+    <!-- Header -->
+    <header class="glass-effect shadow-2xl relative z-10">
+        <div class="container mx-auto mobile-header px-6 py-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="relative main-logo">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 md:p-4 rounded-2xl shadow-lg">
+                            <i class="fas fa-link text-xl md:text-2xl"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Work Link Hub</h1>
+                        <p class="text-gray-600 text-xs md:text-sm mt-1">Your centralized workspace</p>
+                    </div>
+                </div>
+                <div class="header-buttons flex items-center space-x-2 md:space-x-4">
+                    <div id="syncStatus" class="hidden md:flex items-center space-x-2 px-3 py-2 rounded-xl bg-white/20 backdrop-blur-sm">
+                        <i id="syncIcon" class="fas fa-cloud text-sm text-green-400"></i>
+                        <span id="syncText" class="text-sm text-white font-medium">Synced</span>
+                    </div>
+                    <button id="darkModeToggle" class="btn-modern bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-2 md:p-3 rounded-xl shadow-lg transform hover:scale-105 relative overflow-hidden touch-target">
+                        <i id="darkModeIcon" class="fas fa-moon text-base md:text-lg transition-transform duration-300"></i>
+                    </button>
+                    <button id="settingsBtn" class="btn-modern bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white px-3 py-2 md:px-6 md:py-3 rounded-xl shadow-lg flex items-center space-x-2 md:space-x-3 transform hover:scale-105 touch-target">
+                        <i class="fas fa-cog text-base md:text-lg"></i>
+                        <span class="font-medium text-sm md:text-base">Settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 md:px-6 py-6 md:py-12 relative z-10 mobile-reduced-motion" id="mainContent">
+        <!-- Welcome Message -->
+        <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-card p-4 md:p-8 mb-6 md:mb-12 fade-in card-hover">
+            <div class="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-6">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg section-icon">
+                    <i class="fas fa-home text-lg md:text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Welcome to Workspace Hub!</h2>
+                    <p class="text-gray-500 mt-1 text-sm md:text-base">Your productivity starts here</p>
+                </div>
+            </div>
+            <p class="text-gray-600 text-sm md:text-lg leading-relaxed">Access all your important professional resources in one beautifully organized place. Streamline your workflow and boost your productivity.</p>
+        </div>
+
+        <!-- Sections Container -->
+        <div id="sectionsContainer" class="grid gap-4 md:gap-8">
+            <!-- Sections will be dynamically generated here -->
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 md:p-6">
+            <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-modal max-w-5xl w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto">
+                <div class="mobile-modal-content p-4 md:p-8 border-b border-white/20">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-3 md:space-x-4">
+                            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                                <i class="fas fa-cog text-lg md:text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Admin Settings</h3>
+                                <p class="text-gray-500 text-xs md:text-sm mt-1">Manage your workspace</p>
+                            </div>
+                        </div>
+                        <button id="closeSettings" class="btn-modern bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 touch-target">
+                            <i class="fas fa-times text-base md:text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mobile-modal-content p-4 md:p-8">
+                    <!-- Analytics Overview -->
+                    <div class="mb-6 md:mb-10 bg-gradient-to-r from-green-50 to-blue-50 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-green-100">
+                        <h4 class="text-lg md:text-xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent flex items-center">
+                            <i class="fas fa-chart-line mr-2 md:mr-3 text-green-500"></i>
+                            Usage Analytics
+                        </h4>
+                        <div id="analyticsOverview" class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                            <!-- Analytics will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Add New Section -->
+                    <div class="mb-6 md:mb-10 bg-gradient-to-r from-blue-50 to-purple-50 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-blue-100">
+                        <h4 class="text-lg md:text-xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center">
+                            <i class="fas fa-plus-circle mr-2 md:mr-3 text-blue-500"></i>
+                            Add New Section
+                        </h4>
+                        <div class="mobile-form-grid grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                            <input type="text" id="newSectionName" placeholder="Section Name" class="border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <input type="text" id="newSectionIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <button id="addSectionBtn" class="btn-modern bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 font-medium text-sm md:text-base touch-target">
+                                <i class="fas fa-plus mr-2"></i>Add Section
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Existing Sections -->
+                    <div id="sectionsEditor">
+                        <!-- Sections editor will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Section Modal -->
+    <div id="editSectionModal" class="fixed inset-0 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 md:p-6">
+            <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-modal max-w-lg w-full">
+                <div class="mobile-modal-content p-4 md:p-8 border-b border-white/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                            <i class="fas fa-edit text-base md:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Edit Section</h3>
+                    </div>
+                </div>
+                <div class="mobile-modal-content p-4 md:p-8">
+                    <div class="space-y-4 md:space-y-6">
+                        <input type="text" id="editSectionName" placeholder="Section Name" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <input type="text" id="editSectionIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                    </div>
+                    <div class="mobile-form-buttons flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4 mt-6 md:mt-8">
+                        <button id="cancelEditSection" class="px-4 py-2 md:px-6 md:py-3 text-gray-600 hover:text-gray-800 transition-colors font-medium text-sm md:text-base touch-target">Cancel</button>
+                        <button id="saveEditSection" class="btn-modern bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 font-medium text-sm md:text-base touch-target">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Link Modal -->
+    <div id="addLinkModal" class="fixed inset-0 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 md:p-6">
+            <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-modal max-w-lg w-full">
+                <div class="mobile-modal-content p-4 md:p-8 border-b border-white/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-r from-green-500 to-blue-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                            <i class="fas fa-plus text-base md:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Add New Link</h3>
+                    </div>
+                </div>
+                <div class="mobile-modal-content p-4 md:p-8">
+                    <div class="space-y-4 md:space-y-6">
+                        <input type="text" id="linkName" placeholder="Link Name" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <input type="url" id="linkUrl" placeholder="URL (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <div class="flex items-center space-x-3">
+                            <input type="text" id="linkIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="flex-1 border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <div class="bg-gray-100 p-3 rounded-xl flex items-center justify-center w-12 h-12">
+                                <i id="linkIconPreview" class="fas fa-external-link-alt text-gray-400"></i>
+                            </div>
+                        </div>
+                        <textarea id="linkDescription" placeholder="Description (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm h-20 md:h-24 resize-none text-sm md:text-base"></textarea>
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" id="linkVpnRequired" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2">
+                            <label for="linkVpnRequired" class="text-xs md:text-sm font-medium text-gray-700 flex items-center">
+                                <i class="fas fa-shield-alt text-orange-500 mr-2"></i>
+                                Requires company VPN
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mobile-form-buttons flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4 mt-6 md:mt-8">
+                        <button id="cancelAddLink" class="px-4 py-2 md:px-6 md:py-3 text-gray-600 hover:text-gray-800 transition-colors font-medium text-sm md:text-base touch-target">Cancel</button>
+                        <button id="saveLink" class="btn-modern bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 font-medium text-sm md:text-base touch-target">Save Link</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="fixed inset-0 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 md:p-6">
+            <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-modal max-w-md w-full">
+                <div class="mobile-modal-content p-4 md:p-8 border-b border-white/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-r from-red-500 to-orange-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                            <i class="fas fa-lock text-base md:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Admin Access Required</h3>
+                    </div>
+                </div>
+                <div class="mobile-modal-content p-4 md:p-8">
+                    <div class="space-y-4 md:space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Enter Admin Password</label>
+                            <input type="password" id="adminPassword" placeholder="Enter password" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base text-center text-2xl tracking-widest" maxlength="4">
+                        </div>
+                        <div id="passwordError" class="text-red-500 text-sm text-center hidden">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Incorrect password. Please try again.
+                        </div>
+                    </div>
+                    <div class="mobile-form-buttons flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4 mt-6 md:mt-8">
+                        <button id="cancelPassword" class="px-4 py-2 md:px-6 md:py-3 text-gray-600 hover:text-gray-800 transition-colors font-medium text-sm md:text-base touch-target">Cancel</button>
+                        <button id="submitPassword" class="btn-modern bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 font-medium text-sm md:text-base touch-target">
+                            <i class="fas fa-unlock mr-2"></i>Access Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Link Modal -->
+    <div id="editLinkModal" class="fixed inset-0 modal-backdrop hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 md:p-6">
+            <div class="glass-effect rounded-2xl md:rounded-3xl shadow-2xl mobile-modal max-w-lg w-full">
+                <div class="mobile-modal-content p-4 md:p-8 border-b border-white/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                            <i class="fas fa-edit text-base md:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Edit Link</h3>
+                    </div>
+                </div>
+                <div class="mobile-modal-content p-4 md:p-8">
+                    <div class="space-y-4 md:space-y-6">
+                        <input type="text" id="editLinkName" placeholder="Link Name" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <input type="url" id="editLinkUrl" placeholder="URL (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                        <div class="flex items-center space-x-3">
+                            <input type="text" id="editLinkIcon" placeholder="Icon (e.g., fas fa-chart-bar)" class="flex-1 border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-sm md:text-base">
+                            <div class="bg-gray-100 p-3 rounded-xl flex items-center justify-center w-12 h-12">
+                                <i id="editLinkIconPreview" class="fas fa-external-link-alt text-gray-400"></i>
+                            </div>
+                        </div>
+                        <textarea id="editLinkDescription" placeholder="Description (optional)" class="w-full border border-gray-200 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm h-20 md:h-24 resize-none text-sm md:text-base"></textarea>
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" id="editLinkVpnRequired" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2">
+                            <label for="editLinkVpnRequired" class="text-xs md:text-sm font-medium text-gray-700 flex items-center">
+                                <i class="fas fa-shield-alt text-orange-500 mr-2"></i>
+                                Requires company VPN
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mobile-form-buttons flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4 mt-6 md:mt-8">
+                        <button id="cancelEditLink" class="px-4 py-2 md:px-6 md:py-3 text-gray-600 hover:text-gray-800 transition-colors font-medium text-sm md:text-base touch-target">Cancel</button>
+                        <button id="saveEditLink" class="btn-modern bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl shadow-lg transform hover:scale-105 font-medium text-sm md:text-base touch-target">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default data structure
+        let workspaceData = {
+            sections: [
+                {
+                    id: 'daily-report',
+                    name: 'Daily Report',
+                    icon: 'fas fa-chart-line',
+                    links: [
+                        { name: 'SL Daily Work Report', url: '#', description: 'Daily work reporting system', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'project-evaluation',
+                    name: 'Project Evaluation',
+                    icon: 'fas fa-project-diagram',
+                    links: [
+                        { name: 'New Project Evaluation', url: '#', description: 'Evaluate new project proposals', clicks: 0 },
+                        { name: 'Golf Collection - ประเมินเงินลงทุน LNG', url: '#', description: 'LNG investment evaluation', clicks: 0 },
+                        { name: 'Golf Collection - ประเมินเงินลงทุน MRS', url: '#', description: 'MRS investment evaluation', clicks: 0 },
+                        { name: 'Feasibility study (Beta)', url: '#', description: 'Beta version feasibility studies', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'iso-forms',
+                    name: 'ISO Forms',
+                    icon: 'fas fa-file-alt',
+                    links: [
+                        { name: 'ISO FORM', url: '#', description: 'Standard ISO documentation', clicks: 0 },
+                        { name: 'New Business Flow Job Requested to Operation: OP-FO-301', url: '#', description: 'Business flow operations form', clicks: 0 },
+                        { name: 'Energy Consumption Questionnaire: SL-FO-014', url: '#', description: 'Energy consumption survey', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'data-center',
+                    name: 'Data Center',
+                    icon: 'fas fa-database',
+                    links: [
+                        { name: 'Data Center (Internal file for download)', url: '#', description: 'Internal data center resources', vpnRequired: true, clicks: 0 },
+                        { name: 'SL internal link (Username & Password) – Lalamove, Canva', url: '#', description: 'Internal system credentials', clicks: 0 },
+                        { name: 'AMR – Username & Password', url: '#', description: 'AMR system access', clicks: 0 },
+                        { name: 'GAS QUALITY – GSM Username & Password', url: '#', description: 'Gas quality monitoring system', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'customer-data',
+                    name: 'Customer Data',
+                    icon: 'fas fa-users',
+                    links: [
+                        { name: 'Customer DATA', url: '#', description: 'Customer information database', clicks: 0 },
+                        { name: 'Customer Dashboard (Data until 2023)', url: '#', description: 'Customer analytics dashboard', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'contact-shortcuts',
+                    name: 'Contact Shortcuts',
+                    icon: 'fas fa-address-book',
+                    links: [
+                        { name: 'NGD Directory', url: '#', description: 'Company directory', clicks: 0 },
+                        { name: 'Emergency Contact', url: '#', description: 'Emergency contact information', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'email-access',
+                    name: 'Email Access',
+                    icon: 'fas fa-envelope',
+                    links: [
+                        { name: 'Owamail - PTTNGD Mail (User: pttgrp\\ngd57268)', url: '#', description: 'Corporate email access', clicks: 0 }
+                    ]
+                },
+                {
+                    id: 'golf-collection',
+                    name: 'Golf Collection',
+                    icon: 'fas fa-golf-ball',
+                    links: [
+                        { name: 'Golf Collection', url: '#', description: 'Golf collection management', clicks: 0 }
+                    ]
+                }
+            ]
+        };
+
+        // Firebase data management
+        const FIREBASE_DOC_ID = 'workspace-data';
+        let isFirebaseReady = false;
+        let firebaseSyncEnabled = true;
+
+        // Load data from Firebase or localStorage
+        async function loadData() {
+            if (isFirebaseReady && firebaseSyncEnabled) {
+                try {
+                    const docRef = window.firebaseDoc(window.firebaseDB, 'workspaces', FIREBASE_DOC_ID);
+                    const docSnap = await window.firebaseGetDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        const firebaseData = docSnap.data();
+                        workspaceData = firebaseData.data;
+                        console.log('Data loaded from Firebase');
+                        showNotification('Data synced from cloud', 'success');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error loading from Firebase:', error);
+                    showNotification('Failed to sync from cloud, using local data', 'warning');
+                }
+            }
+            
+            // Fallback to localStorage
+            const saved = localStorage.getItem('workLinkHubData');
+            if (saved) {
+                workspaceData = JSON.parse(saved);
+                console.log('Data loaded from localStorage');
+            }
+        }
+
+        // Save data to Firebase and localStorage
+        async function saveData() {
+            // Always save to localStorage as backup
+            localStorage.setItem('workLinkHubData', JSON.stringify(workspaceData));
+            
+            if (isFirebaseReady && firebaseSyncEnabled) {
+                updateSyncStatus('syncing');
+                try {
+                    const docRef = window.firebaseDoc(window.firebaseDB, 'workspaces', FIREBASE_DOC_ID);
+                    await window.firebaseSetDoc(docRef, {
+                        data: workspaceData,
+                        lastUpdated: new Date().toISOString(),
+                        version: '1.0'
+                    });
+                    console.log('Data saved to Firebase');
+                    updateSyncStatus('synced');
+                    showNotification('Data synced to cloud', 'success');
+                } catch (error) {
+                    console.error('Error saving to Firebase:', error);
+                    updateSyncStatus('error');
+                    showNotification('Failed to sync to cloud, saved locally', 'warning');
+                }
+            } else {
+                updateSyncStatus('offline');
+            }
+        }
+
+        // Setup real-time sync
+        function setupRealtimeSync() {
+            if (!isFirebaseReady || !firebaseSyncEnabled) return;
+            
+            try {
+                const docRef = window.firebaseDoc(window.firebaseDB, 'workspaces', FIREBASE_DOC_ID);
+                window.firebaseOnSnapshot(docRef, (doc) => {
+                    if (doc.exists()) {
+                        const firebaseData = doc.data();
+                        const lastUpdated = firebaseData.lastUpdated;
+                        const currentTime = new Date().toISOString();
+                        
+                        // Only update if the change is from another source (not this instance)
+                        if (lastUpdated && Math.abs(new Date(currentTime) - new Date(lastUpdated)) > 1000) {
+                            workspaceData = firebaseData.data;
+                            renderSections();
+                            showNotification('Data updated from another device', 'info');
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error setting up real-time sync:', error);
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                warning: 'bg-yellow-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Slide in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Slide out and remove
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Update sync status indicator
+        function updateSyncStatus(status, message) {
+            const syncIcon = document.getElementById('syncIcon');
+            const syncText = document.getElementById('syncText');
+            
+            switch(status) {
+                case 'synced':
+                    syncIcon.className = 'fas fa-cloud text-sm text-green-400';
+                    syncText.textContent = 'Synced';
+                    break;
+                case 'syncing':
+                    syncIcon.className = 'fas fa-sync-alt fa-spin text-sm text-blue-400';
+                    syncText.textContent = 'Syncing...';
+                    break;
+                case 'offline':
+                    syncIcon.className = 'fas fa-cloud-slash text-sm text-red-400';
+                    syncText.textContent = 'Offline';
+                    break;
+                case 'error':
+                    syncIcon.className = 'fas fa-exclamation-triangle text-sm text-yellow-400';
+                    syncText.textContent = 'Sync Error';
+                    break;
+            }
+        }
+
+        // Render sections
+        function renderSections() {
+            const container = document.getElementById('sectionsContainer');
+            container.innerHTML = '';
+
+            workspaceData.sections.forEach((section, index) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'glass-effect rounded-3xl shadow-2xl p-8 fade-in card-hover';
+                sectionDiv.style.animationDelay = `${index * 0.1}s`;
+                
+                sectionDiv.innerHTML = `
+                    <div class="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-6">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg section-icon">
+                            <i class="${section.icon} text-lg md:text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">${section.name}</h3>
+                            <p class="text-gray-500 text-xs md:text-sm mt-1">${section.links.filter(link => !link.hidden).length} resources available</p>
+                        </div>
+                    </div>
+                    <div class="mobile-links grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                        ${section.links.filter(link => !link.hidden).map((link, linkIndex) => `
+                            <div class="mobile-link-card link-card bg-white/80 backdrop-blur-sm p-3 md:p-4 rounded-xl md:rounded-2xl cursor-pointer group ${link.vpnRequired ? 'vpn-required' : ''} touch-target" onclick="handleLinkClick('${link.url}', '${link.name}', ${link.vpnRequired || false}, ${index}, ${linkIndex})" style="animation-delay: ${(index * 0.1) + (linkIndex * 0.05)}s">
+                                <div class="flex items-start space-x-2 md:space-x-3">
+                                    <div class="bg-gradient-to-r from-blue-400 to-purple-500 text-white p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-md group-hover:scale-110 transition-transform duration-200 flex-shrink-0">
+                                        <i class="${link.icon || (link.vpnRequired ? 'fas fa-shield-alt' : 'fas fa-external-link-alt')} text-xs md:text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-semibold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-blue-600 transition-colors duration-200">${link.name}</h4>
+                                        ${link.description ? `<p class="text-gray-500 text-xs leading-relaxed mt-1 md:mt-2">${link.description}</p>` : ''}
+                                        ${link.vpnRequired ? `<p class="text-orange-600 text-xs mt-1 font-medium"><i class="fas fa-shield-alt mr-1"></i>Requires company VPN</p>` : ''}
+                                        <div class="flex items-center text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 md:mt-2">
+                                            <span>Click to open</span>
+                                            <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform duration-200"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Handle link clicks
+        function handleLinkClick(url, name, vpnRequired = false, sectionIndex, originalLinkIndex) {
+            // Find the actual link index in the original array (not filtered)
+            const section = workspaceData.sections[sectionIndex];
+            const visibleLinks = section.links.filter(link => !link.hidden);
+            const actualLink = visibleLinks[originalLinkIndex];
+            const actualLinkIndex = section.links.findIndex(link => link === actualLink);
+            
+            // Track the click
+            if (section && section.links[actualLinkIndex]) {
+                if (!section.links[actualLinkIndex].clicks) {
+                    section.links[actualLinkIndex].clicks = 0;
+                }
+                section.links[actualLinkIndex].clicks++;
+                
+                // Save the updated data
+                saveData();
+                
+                // Update the display
+                renderSections();
+                
+                // Show click notification
+                showNotification(`📊 ${name} - Total clicks: ${section.links[actualLinkIndex].clicks}`, 'info');
+            }
+            
+            if (vpnRequired) {
+                showNotification('⚠️ This resource requires company VPN connection', 'warning');
+            }
+            
+            if (url && url !== '#') {
+                window.open(url, '_blank');
+            } else {
+                // Show a message for demo links
+                const message = document.createElement('div');
+                message.className = `fixed top-4 right-4 ${vpnRequired ? 'bg-orange-500' : 'bg-blue-500'} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
+                message.textContent = `Demo: ${name} clicked${vpnRequired ? ' (VPN Required)' : ''}`;
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 3000);
+            }
+        }
+
+        // Render settings editor
+        function renderSettingsEditor() {
+            const editor = document.getElementById('sectionsEditor');
+            editor.innerHTML = '';
+
+            workspaceData.sections.forEach((section, sectionIndex) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'mb-8 bg-white/60 backdrop-blur-sm border border-white/30 rounded-3xl p-6 draggable shadow-lg';
+                sectionDiv.draggable = true;
+                sectionDiv.dataset.sectionIndex = sectionIndex;
+                
+                sectionDiv.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-3 md:gap-0">
+                        <div class="flex items-center space-x-3 md:space-x-4 flex-1">
+                            <i class="fas fa-grip-vertical drag-handle text-lg md:text-xl text-gray-400 hover:text-gray-600"></i>
+                            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-lg">
+                                <i class="${section.icon} text-base md:text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg md:text-xl font-bold text-gray-800">${section.name}</h4>
+                                <p class="text-gray-500 text-xs md:text-sm">${section.links.length} links</p>
+                            </div>
+                        </div>
+                        <div class="mobile-settings-buttons flex flex-row md:flex-row space-x-2 md:space-x-3 w-full md:w-auto">
+                            <button onclick="editSection(${sectionIndex})" class="btn-modern bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm shadow-lg transform hover:scale-105 flex-1 md:flex-none touch-target">
+                                <i class="fas fa-edit mr-1 md:mr-2"></i>Edit
+                            </button>
+                            <button onclick="addLinkToSection(${sectionIndex})" class="btn-modern bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm shadow-lg transform hover:scale-105 flex-1 md:flex-none touch-target">
+                                <i class="fas fa-plus mr-1 md:mr-2"></i>Add
+                            </button>
+                            <button onclick="deleteSection(${sectionIndex})" class="btn-modern bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm shadow-lg transform hover:scale-105 flex-1 md:flex-none touch-target">
+                                <i class="fas fa-trash mr-1 md:mr-2"></i>Del
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 md:space-y-3 links-container" data-section-index="${sectionIndex}">
+                        ${section.links.map((link, linkIndex) => `
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center ${link.hidden ? 'bg-gradient-to-r from-gray-100 to-gray-200 opacity-60' : 'bg-gradient-to-r from-gray-50 to-white'} p-3 md:p-4 rounded-xl md:rounded-2xl draggable link-item border border-gray-100 shadow-sm gap-3 md:gap-0" draggable="true" data-link-index="${linkIndex}">
+                                <div class="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0 w-full md:w-auto">
+                                    <i class="fas fa-grip-vertical drag-handle text-gray-400 hover:text-gray-600 flex-shrink-0"></i>
+                                    <div class="bg-gradient-to-r from-blue-400 to-purple-500 text-white p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-md flex-shrink-0">
+                                        <i class="${link.icon || 'fas fa-link'} text-xs md:text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-semibold text-gray-800 text-sm md:text-base flex items-center">
+                                            ${link.name}
+                                            ${link.hidden ? '<span class="ml-2 text-xs bg-gray-400 text-white px-2 py-1 rounded-full">Hidden</span>' : ''}
+                                        </div>
+                                        ${link.url && link.url !== '#' ? `<div class="text-xs md:text-sm text-blue-600 truncate">${link.url}</div>` : ''}
+                                        ${link.description ? `<div class="text-xs md:text-sm text-gray-500 mt-1">${link.description}</div>` : ''}
+                                        <div class="flex items-center mt-2 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
+                                            <i class="fas fa-chart-bar mr-2 text-blue-500"></i>
+                                            <span class="font-medium">Clicks: ${link.clicks || 0}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 md:space-x-3 w-full md:w-auto justify-end">
+                                    <button onclick="toggleLinkVisibility(${sectionIndex}, ${linkIndex})" class="${link.hidden ? 'text-gray-400 hover:text-gray-600' : 'text-green-500 hover:text-green-700'} p-2 rounded-lg md:rounded-xl hover:bg-gray-50 transition-all duration-200 touch-target" title="${link.hidden ? 'Show link' : 'Hide link'}">
+                                        <i class="fas ${link.hidden ? 'fa-eye-slash' : 'fa-eye'} text-sm"></i>
+                                    </button>
+                                    <button onclick="editLink(${sectionIndex}, ${linkIndex})" class="text-blue-500 hover:text-blue-700 p-2 rounded-lg md:rounded-xl hover:bg-blue-50 transition-all duration-200 touch-target">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </button>
+                                    <button onclick="deleteLink(${sectionIndex}, ${linkIndex})" class="text-red-500 hover:text-red-700 p-2 rounded-lg md:rounded-xl hover:bg-red-50 transition-all duration-200 touch-target">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                editor.appendChild(sectionDiv);
+            });
+
+            // Add drag and drop event listeners
+            addDragAndDropListeners();
+        }
+
+        // Modal management
+        let currentSectionIndex = -1;
+        let currentEditSectionIndex = -1;
+        let currentEditLinkData = { sectionIndex: -1, linkIndex: -1 };
+
+        function showPasswordModal() {
+            document.getElementById('passwordModal').classList.remove('hidden');
+            document.getElementById('adminPassword').focus();
+            document.getElementById('passwordError').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function hidePasswordModal() {
+            document.getElementById('passwordModal').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').classList.add('hidden');
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            
+            if (password === '8888') {
+                hidePasswordModal();
+                showSettings();
+                showNotification('Access granted! Welcome to admin settings', 'success');
+            } else {
+                errorDiv.classList.remove('hidden');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+                
+                // Add shake animation
+                const passwordInput = document.getElementById('adminPassword');
+                passwordInput.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    passwordInput.style.animation = '';
+                }, 500);
+            }
+        }
+
+        function showSettings() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+            renderSettingsEditor();
+            renderAnalytics();
+        }
+
+        // Render analytics overview
+        function renderAnalytics() {
+            const analyticsContainer = document.getElementById('analyticsOverview');
+            
+            // Calculate total clicks
+            let totalClicks = 0;
+            let mostClickedLink = { name: '', clicks: 0, section: '' };
+            let totalLinks = 0;
+            
+            workspaceData.sections.forEach(section => {
+                section.links.forEach(link => {
+                    totalLinks++;
+                    const clicks = link.clicks || 0;
+                    totalClicks += clicks;
+                    
+                    if (clicks > mostClickedLink.clicks) {
+                        mostClickedLink = {
+                            name: link.name,
+                            clicks: clicks,
+                            section: section.name
+                        };
+                    }
+                });
+            });
+            
+            const averageClicks = totalLinks > 0 ? (totalClicks / totalLinks).toFixed(1) : 0;
+            
+            analyticsContainer.innerHTML = `
+                <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-white/30 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-blue-600 mb-2">${totalClicks}</div>
+                    <div class="text-xs md:text-sm text-gray-600 font-medium">Total Clicks</div>
+                    <div class="text-xs text-gray-500 mt-1">Across all links</div>
+                </div>
+                
+                <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-white/30 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-green-600 mb-2">${averageClicks}</div>
+                    <div class="text-xs md:text-sm text-gray-600 font-medium">Avg per Link</div>
+                    <div class="text-xs text-gray-500 mt-1">${totalLinks} total links</div>
+                </div>
+                
+                <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-white/30">
+                    <div class="text-lg md:text-xl font-bold text-purple-600 mb-2">${mostClickedLink.clicks}</div>
+                    <div class="text-xs md:text-sm text-gray-600 font-medium">Most Popular</div>
+                    <div class="text-xs text-gray-500 mt-1 truncate" title="${mostClickedLink.name}">
+                        ${mostClickedLink.name || 'No clicks yet'}
+                    </div>
+                    ${mostClickedLink.section ? `<div class="text-xs text-gray-400 mt-1">${mostClickedLink.section}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function hideSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function showAddLinkModal(sectionIndex) {
+            currentSectionIndex = sectionIndex;
+            document.getElementById('addLinkModal').classList.remove('hidden');
+            // Clear form
+            document.getElementById('linkName').value = '';
+            document.getElementById('linkUrl').value = '';
+            document.getElementById('linkDescription').value = '';
+        }
+
+        function hideAddLinkModal() {
+            document.getElementById('addLinkModal').classList.add('hidden');
+            currentSectionIndex = -1;
+            // Clear form
+            document.getElementById('linkName').value = '';
+            document.getElementById('linkUrl').value = '';
+            document.getElementById('linkIcon').value = '';
+            document.getElementById('linkDescription').value = '';
+            document.getElementById('linkVpnRequired').checked = false;
+            // Reset icon preview
+            document.getElementById('linkIconPreview').className = 'fas fa-external-link-alt text-gray-400';
+        }
+
+        function showEditSectionModal(sectionIndex) {
+            currentEditSectionIndex = sectionIndex;
+            const section = workspaceData.sections[sectionIndex];
+            
+            document.getElementById('editSectionName').value = section.name;
+            document.getElementById('editSectionIcon').value = section.icon;
+            document.getElementById('editSectionModal').classList.remove('hidden');
+        }
+
+        function hideEditSectionModal() {
+            document.getElementById('editSectionModal').classList.add('hidden');
+            currentEditSectionIndex = -1;
+        }
+
+        function showEditLinkModal(sectionIndex, linkIndex) {
+            currentEditLinkData = { sectionIndex, linkIndex };
+            const link = workspaceData.sections[sectionIndex].links[linkIndex];
+            
+            document.getElementById('editLinkName').value = link.name;
+            document.getElementById('editLinkUrl').value = link.url === '#' ? '' : link.url;
+            document.getElementById('editLinkIcon').value = link.icon || '';
+            document.getElementById('editLinkDescription').value = link.description || '';
+            document.getElementById('editLinkVpnRequired').checked = link.vpnRequired || false;
+            
+            // Update icon preview
+            const iconPreview = document.getElementById('editLinkIconPreview');
+            if (link.icon) {
+                iconPreview.className = link.icon + ' text-gray-400';
+            } else {
+                iconPreview.className = 'fas fa-external-link-alt text-gray-400';
+            }
+            
+            document.getElementById('editLinkModal').classList.remove('hidden');
+        }
+
+        function hideEditLinkModal() {
+            document.getElementById('editLinkModal').classList.add('hidden');
+            currentEditLinkData = { sectionIndex: -1, linkIndex: -1 };
+        }
+
+        // CRUD operations
+        function addSection() {
+            const name = document.getElementById('newSectionName').value.trim();
+            const icon = document.getElementById('newSectionIcon').value.trim() || 'fas fa-folder';
+            
+            if (!name) {
+                alert('Please enter a section name');
+                return;
+            }
+
+            const newSection = {
+                id: name.toLowerCase().replace(/\s+/g, '-'),
+                name: name,
+                icon: icon,
+                links: []
+            };
+
+            workspaceData.sections.push(newSection);
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            
+            // Clear form
+            document.getElementById('newSectionName').value = '';
+            document.getElementById('newSectionIcon').value = '';
+        }
+
+        function deleteSection(index) {
+            if (confirm('Are you sure you want to delete this section?')) {
+                workspaceData.sections.splice(index, 1);
+                saveData();
+                renderSections();
+                renderSettingsEditor();
+                showNotification('Section deleted successfully', 'success');
+            }
+        }
+
+        function editSection(sectionIndex) {
+            showEditSectionModal(sectionIndex);
+        }
+
+        function addLinkToSection(sectionIndex) {
+            showAddLinkModal(sectionIndex);
+        }
+
+        function editLink(sectionIndex, linkIndex) {
+            showEditLinkModal(sectionIndex, linkIndex);
+        }
+
+        function saveLink() {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const icon = document.getElementById('linkIcon').value.trim();
+            const description = document.getElementById('linkDescription').value.trim();
+            const vpnRequired = document.getElementById('linkVpnRequired').checked;
+            
+            if (!name) {
+                alert('Please enter a link name');
+                return;
+            }
+
+            const newLink = {
+                name: name,
+                url: url || '#',
+                description: description,
+                clicks: 0
+            };
+            
+            if (icon) {
+                newLink.icon = icon;
+            }
+            
+            if (vpnRequired) {
+                newLink.vpnRequired = true;
+            }
+
+            workspaceData.sections[currentSectionIndex].links.push(newLink);
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            hideAddLinkModal();
+        }
+
+        function saveEditSection() {
+            const name = document.getElementById('editSectionName').value.trim();
+            const icon = document.getElementById('editSectionIcon').value.trim();
+            
+            if (!name) {
+                alert('Please enter a section name');
+                return;
+            }
+
+            workspaceData.sections[currentEditSectionIndex].name = name;
+            workspaceData.sections[currentEditSectionIndex].icon = icon || 'fas fa-folder';
+            workspaceData.sections[currentEditSectionIndex].id = name.toLowerCase().replace(/\s+/g, '-');
+            
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            hideEditSectionModal();
+        }
+
+        function saveEditLink() {
+            const name = document.getElementById('editLinkName').value.trim();
+            const url = document.getElementById('editLinkUrl').value.trim();
+            const icon = document.getElementById('editLinkIcon').value.trim();
+            const description = document.getElementById('editLinkDescription').value.trim();
+            const vpnRequired = document.getElementById('editLinkVpnRequired').checked;
+            
+            if (!name) {
+                alert('Please enter a link name');
+                return;
+            }
+
+            const { sectionIndex, linkIndex } = currentEditLinkData;
+            const existingLink = workspaceData.sections[sectionIndex].links[linkIndex];
+            const updatedLink = {
+                name: name,
+                url: url || '#',
+                description: description,
+                clicks: existingLink.clicks || 0  // Preserve existing click count
+            };
+            
+            if (icon) {
+                updatedLink.icon = icon;
+            }
+            
+            if (vpnRequired) {
+                updatedLink.vpnRequired = true;
+            }
+            
+            workspaceData.sections[sectionIndex].links[linkIndex] = updatedLink;
+            
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            hideEditLinkModal();
+        }
+
+        function deleteLink(sectionIndex, linkIndex) {
+            if (confirm('Are you sure you want to delete this link?')) {
+                workspaceData.sections[sectionIndex].links.splice(linkIndex, 1);
+                saveData();
+                renderSections();
+                renderSettingsEditor();
+                showNotification('Link deleted successfully', 'success');
+            }
+        }
+
+        function toggleLinkVisibility(sectionIndex, linkIndex) {
+            const link = workspaceData.sections[sectionIndex].links[linkIndex];
+            link.hidden = !link.hidden;
+            
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+            
+            const status = link.hidden ? 'hidden' : 'visible';
+            showNotification(`Link is now ${status}`, 'success');
+        }
+
+        // Dark mode functionality
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+            updateDarkMode();
+        }
+        
+        function updateDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('darkModeIcon');
+            
+            if (isDarkMode) {
+                body.classList.add('dark');
+                icon.className = 'fas fa-sun text-lg transition-transform duration-300';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                body.classList.remove('dark');
+                icon.className = 'fas fa-moon text-lg transition-transform duration-300';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // Initialize dark mode
+        updateDarkMode();
+
+        // Icon preview functionality
+        function updateIconPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            
+            input.addEventListener('input', function() {
+                const iconClass = this.value.trim();
+                if (iconClass && iconClass.includes('fa-')) {
+                    preview.className = iconClass + ' text-gray-400';
+                } else {
+                    preview.className = 'fas fa-external-link-alt text-gray-400';
+                }
+            });
+        }
+
+        // Event listeners
+        document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+        document.getElementById('settingsBtn').addEventListener('click', showPasswordModal);
+        document.getElementById('closeSettings').addEventListener('click', hideSettings);
+        document.getElementById('addSectionBtn').addEventListener('click', addSection);
+        document.getElementById('cancelAddLink').addEventListener('click', hideAddLinkModal);
+        document.getElementById('saveLink').addEventListener('click', saveLink);
+        document.getElementById('cancelEditSection').addEventListener('click', hideEditSectionModal);
+        document.getElementById('saveEditSection').addEventListener('click', saveEditSection);
+        document.getElementById('cancelEditLink').addEventListener('click', hideEditLinkModal);
+        document.getElementById('saveEditLink').addEventListener('click', saveEditLink);
+        document.getElementById('cancelPassword').addEventListener('click', hidePasswordModal);
+        document.getElementById('submitPassword').addEventListener('click', checkPassword);
+        
+        // Setup icon preview listeners
+        updateIconPreview('linkIcon', 'linkIconPreview');
+        updateIconPreview('editLinkIcon', 'editLinkIconPreview');
+
+        // Close modals when clicking outside
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) hideSettings();
+        });
+
+        document.getElementById('addLinkModal').addEventListener('click', function(e) {
+            if (e.target === this) hideAddLinkModal();
+        });
+
+        document.getElementById('editSectionModal').addEventListener('click', function(e) {
+            if (e.target === this) hideEditSectionModal();
+        });
+
+        document.getElementById('editLinkModal').addEventListener('click', function(e) {
+            if (e.target === this) hideEditLinkModal();
+        });
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) hidePasswordModal();
+        });
+
+        // Enter key support for password input
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Drag and drop functionality
+        let draggedElement = null;
+        let draggedType = null;
+        let draggedData = null;
+
+        function addDragAndDropListeners() {
+            const sectionsEditor = document.getElementById('sectionsEditor');
+            
+            // Add event listeners to all draggable elements
+            sectionsEditor.addEventListener('dragstart', function(e) {
+                const target = e.target.closest('.draggable');
+                if (!target) return;
+                
+                draggedElement = target;
+                target.classList.add('dragging');
+                
+                if (target.classList.contains('link-item')) {
+                    // Dragging a link
+                    draggedType = 'link';
+                    const sectionIndex = target.closest('[data-section-index]').dataset.sectionIndex;
+                    const linkIndex = target.dataset.linkIndex;
+                    draggedData = { sectionIndex: parseInt(sectionIndex), linkIndex: parseInt(linkIndex) };
+                } else if (target.dataset.sectionIndex !== undefined) {
+                    // Dragging a section
+                    draggedType = 'section';
+                    draggedData = { sectionIndex: parseInt(target.dataset.sectionIndex) };
+                }
+                
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', target.outerHTML);
+            });
+
+            sectionsEditor.addEventListener('dragend', function(e) {
+                if (draggedElement) {
+                    draggedElement.classList.remove('dragging');
+                }
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                draggedElement = null;
+                draggedType = null;
+                draggedData = null;
+            });
+
+            sectionsEditor.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                if (!draggedElement) return;
+                
+                // ลบ class 'drag-over' ออกจากทุก element ก่อน เพื่อป้องกันการแสดงผลซ้อนกัน
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+
+                if (draggedType === 'section') {
+                    const sectionTarget = e.target.closest('.draggable[data-section-index]');
+                    // เพิ่ม class 'drag-over' ให้กับ Section ที่กำลังลากเมาส์ทับอยู่ (ยกเว้นตัวมันเอง)
+                    if (sectionTarget && sectionTarget !== draggedElement) {
+                        sectionTarget.classList.add('drag-over');
+                    }
+                } else if (draggedType === 'link') {
+                    const linksContainer = e.target.closest('.links-container');
+                    if (linksContainer) {
+                        // ไฮไลท์กรอบของ Link ทั้งหมดที่สามารถวางได้
+                        linksContainer.classList.add('drag-over');
+                    }
+                }
+            });
+            sectionsEditor.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (!draggedElement || !draggedData) return;
+                
+                if (draggedType === 'section') {
+                    handleSectionDrop(e);
+                } else if (draggedType === 'link') {
+                    handleLinkDrop(e);
+                }
+                
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            });
+        }
+
+        function handleSectionDrop(e) {
+            const dropTarget = e.target.closest('.draggable[data-section-index]');
+            if (!dropTarget || dropTarget === draggedElement) return;
+
+            const draggedIndex = draggedData.sectionIndex;
+            const targetIndex = parseInt(dropTarget.dataset.sectionIndex);
+
+            // คำนวณว่าผู้ใช้วางเมาส์ไว้ครึ่งบนหรือครึ่งล่างของ Section เป้าหมาย
+            const rect = dropTarget.getBoundingClientRect();
+            const dropAbove = e.clientY < rect.top + rect.height / 2;
+
+            // นำ Section ที่กำลังลากออกจากอาร์เรย์ข้อมูลเดิม
+            const [movedSection] = workspaceData.sections.splice(draggedIndex, 1);
+
+            // คำนวณ index ใหม่ให้ถูกต้อง โดยคิดผลกระทบจากการที่นำข้อมูลออกไปแล้ว
+            let newIndex = targetIndex;
+            if (draggedIndex < targetIndex) {
+                // ถ้าลากจาก index ที่น้อยกว่ามายัง index ที่มากกว่า, index ของเป้าหมายจะขยับมาทางซ้าย 1 ตำแหน่ง
+                newIndex--;
+            }
+            if (!dropAbove) {
+                // ถ้าต้องการวางไว้ข้าง "ล่าง" ของเป้าหมาย ให้เพิ่ม index ไปอีก 1
+                newIndex++;
+            }
+
+            // นำ Section ไปใส่ในตำแหน่งใหม่ที่คำนวณได้
+            workspaceData.sections.splice(newIndex, 0, movedSection);
+
+            // บันทึกและวาดหน้าจอใหม่
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+        }
+
+        function handleLinkDrop(e) {
+            const linksContainer = e.target.closest('.links-container');
+            if (!linksContainer) return;
+            
+            const targetSectionIndex = parseInt(linksContainer.dataset.sectionIndex);
+            const sourceSectionIndex = draggedData.sectionIndex;
+            const sourceLinkIndex = draggedData.linkIndex;
+            
+            // Find target position
+            let targetLinkIndex = 0;
+            const linkItems = linksContainer.querySelectorAll('.link-item:not(.dragging)');
+            
+            for (let i = 0; i < linkItems.length; i++) {
+                const rect = linkItems[i].getBoundingClientRect();
+                if (e.clientY < rect.top + rect.height / 2) {
+                    targetLinkIndex = i;
+                    break;
+                } else {
+                    targetLinkIndex = i + 1;
+                }
+            }
+            
+            // Move link in data
+            const [movedLink] = workspaceData.sections[sourceSectionIndex].links.splice(sourceLinkIndex, 1);
+            
+            // Adjust target index if moving within same section
+            if (sourceSectionIndex === targetSectionIndex && sourceLinkIndex < targetLinkIndex) {
+                targetLinkIndex--;
+            }
+            
+            workspaceData.sections[targetSectionIndex].links.splice(targetLinkIndex, 0, movedLink);
+            
+            saveData();
+            renderSections();
+            renderSettingsEditor();
+        }
+
+        // Initialize app
+        window.initializeApp = async function() {
+            isFirebaseReady = true;
+            updateSyncStatus('syncing');
+            
+            try {
+                await loadData();
+                renderSections();
+                setupRealtimeSync();
+                updateSyncStatus('synced');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                updateSyncStatus('error');
+                // Fallback to localStorage
+                const saved = localStorage.getItem('workLinkHubData');
+                if (saved) {
+                    workspaceData = JSON.parse(saved);
+                    renderSections();
+                }
+            }
+        };
+
+        // Initialize without Firebase if it fails to load
+        setTimeout(() => {
+            if (!isFirebaseReady) {
+                console.log('Firebase not loaded, using localStorage only');
+                updateSyncStatus('offline');
+                firebaseSyncEnabled = false;
+                loadData();
+                renderSections();
+            }
+        }, 5000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a26adb9305d32f',t:'MTc1NDM1NjI1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
